@@ -5,16 +5,42 @@ import './index.css';
 class Square extends React.Component {
     render() {
         return (
-            <button className="square">
-                {/* TODO */}
+            <button className="square"
+                onClick={ () => this.props.onClick() }>
+                {this.props.value}
             </button>
         );
     }
 }
 
+/*
+To collect data from multiple children, or to have two child components communicate with each other,
+you need to declare the shared state in their parent component instead.
+The parent component can pass the state back down to the children by using props;
+this keeps the child components in sync with each other and with the parent component.
+ */
 class Board extends React.Component {
+    // remember which squares are filled by saving the state.
+    constructor(props) {
+        super(props);
+        this.state = {
+            squares: Array(9).fill(null)
+        }
+    }
+
+    handleClick(i) {
+        const squares = this.state.squares.slice();
+        squares[i] = 'X';
+        this.setState({squares: squares});
+    }
+
     renderSquare(i) {
-        return <Square />;
+        return (
+            <Square
+                value={this.state.squares[i]}
+                onClick={() => this.handleClick(i)}
+            />
+        )
     }
 
     render() {
@@ -48,7 +74,7 @@ class Game extends React.Component {
         return (
             <div className="game">
                 <div className="game-board">
-                    <Board />
+                    <Board/>
                 </div>
                 <div className="game-info">
                     <div>{/* status */}</div>
@@ -62,6 +88,6 @@ class Game extends React.Component {
 // ========================================
 
 ReactDOM.render(
-    <Game />,
+    <Game/>,
     document.getElementById('root')
 );
